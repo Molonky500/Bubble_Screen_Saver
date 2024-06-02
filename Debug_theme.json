@@ -1,0 +1,94 @@
+{
+  "text_box": {
+    "colours": {
+      "normal_text": "White",
+      "dark_bg": "#000080",
+      "normal_border": "##90EE90",
+      "link_text": "#FF0000",
+      "link_hover": "#FFFF00",
+      "link_selected": "#FFFFFF"
+    },
+    "misc": {
+      "border_width": "1",
+      "padding": "0,0",
+      "link_normal_underline": "0",
+      "link_hover_underline": "1",
+      "line_spacing": "1.0",
+      "text_horiz_alignment": "left",
+      "text_vert_alignment": "top",
+      "text_horiz_alignment_padding": "1",
+      "text_vert_alignment_padding": "1"
+    }
+  },
+  "text_box.vertical_scroll_bar": {
+    "colours": {
+      "dark_bg": "#505068"
+    }
+  },
+  "text_box.vertical_scroll_bar.#sliding_button": {
+    "misc": {
+      "border_width": "1"
+    }
+  },
+    "window.#close_button":
+     {
+       "colours":
+       {
+       "dark_bg":"#00FA9A",
+       "normal_border": "#0000CD"
+        },
+        "misc":
+        {
+          "shape": "rounded_rectangle",
+          "shape_corner_radius": "10",
+          "border_width": "1",
+          "padding": "20,10",
+          "link_normal_underline": "0",
+          "link_hover_underline": "1",
+          "line_spacing": "1.0",
+          "text_horiz_alignment": "center",
+          "text_vert_alignment": "center",
+          "text_horiz_alignment_padding": "1",
+          "text_vert_alignment_padding": "1"
+        }
+      },
+
+     "window":
+     {
+       "colours":
+       {
+       "dark_bg":"#00FA9A",
+       "normal_border": "#0000CD"
+        },
+        "misc":
+        {
+        "shape": "rounded_rectangle",
+        "shape_corner_radius": "10",
+        "border_width": "1",
+        "shadow_width": "15",
+        "title_bar_height": "20"
+        }
+      },
+        "window.#title_bar":
+        {
+                 "colours":
+       {
+       "dark_bg":"#0000CD",
+       "normal_border": "#0000CD"
+        },
+        "misc": {
+          "shape": "rounded_rectangle",
+          "shape_corner_radius": "10",
+          "border_width": "1",
+          "padding": "20,10",
+          "link_normal_underline": "0",
+          "link_hover_underline": "1",
+          "line_spacing": "1.0",
+          "text_horiz_alignment": "center",
+          "text_vert_alignment": "top",
+          "text_horiz_alignment_padding": "1",
+          "text_vert_alignment_padding": "1"
+     }
+   }
+
+ }
