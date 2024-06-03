@@ -9,17 +9,18 @@ import pygame_gui
 from pymunk.pygame_util import to_pygame, DrawOptions
 import pymunk
 import IMG
+from colors import *
 # noinspection PyUnresolvedReferences
 from Bubble_sprite import Bubble
 from Debug import Debugger
-from colors import *
 from Ticker import Timer
 import pygame as pg
 
 """
-
+To do:
 make window full screen, and transparent,*
-auto launch bubbles
+auto launch bubbles*
+color bubbles?
 mouse body to pop bubbles -morning star?
 bubbles that collide onto each other merge
 option for parallax background
@@ -53,10 +54,10 @@ class BSS:
         self.screen_S = self.S_WIDTH, self.S_HEIGHT
         self.display = pg.display
         self.display.set_caption('Bubble Screen Saver')
-        self.WRESurf = self.display.set_mode(self.screen_S, pg.RESIZABLE  , 0)
+        self.WRESurf = self.display.set_mode(self.screen_S, pg.RESIZABLE, 0)
         self.hwnd = pg.display.get_wm_info()["window"]
         self.background = pg.Surface(size=self.screen_S)
-        self.background.fill(color[aqua])
+        self.background.fill(color[mediumaquamarine])
         self.draw_options = DrawOptions(self.WRESurf)
         self.draw_options.collision_point_color = color[black]
         self.space = pymunk.Space()
@@ -66,25 +67,24 @@ class BSS:
         self.BubbleSprite_group = pg.sprite.Group()
         self.bubble_radius = 64
         self.bubble_diam = self.bubble_radius * 2
-        self.PowerBubble = pg.transform.smoothscale(self.ImgLib.OGPowerBubble, (self.bubble_diam, self.bubble_diam))
+        self.PowerBubble = pg.transform.smoothscale(self.ImgLib.og_bubble_glowy, (self.bubble_diam, self.bubble_diam))
         self.WinBox = []
         self.ui()
         self.Debug = False
         self.cycle_render = self.draw
         self.Number_of_bubbles = 0
-        self.MAX_bubbles = 75
+        self.MAX_bubbles = 50
         self.DEBUG_OFF = pg.event.custom_type()
-        self.Bug = Debugger(self.ui_man,self.DEBUG_OFF)
-        self.Time_to_next_bubble = Timer(duration=350)
+        self.Bug = Debugger(self.ui_man, self.DEBUG_OFF)
+        self.Time_to_next_bubble = Timer(duration=550)
 
-    def StartBubbles(self):
+    def start_bubbles(self):
         if not self.Time_to_next_bubble.active:
             if self.Number_of_bubbles < self.MAX_bubbles:
                 radius = random.randrange(20, 64)
                 pos = self.S_WIDTH - radius, self.S_HEIGHT - radius
                 self.Time_to_next_bubble = Timer(duration=350, func=self.spawn_bubble(self.PowerBubble, pos, radius))
                 self.Time_to_next_bubble.activate()
-
 
     def create_segment(self, from_, to_, thickness, col):
         self.segment_shape = pymunk.Segment(self.space.static_body, from_, to_, thickness)
@@ -104,7 +104,7 @@ class BSS:
         d1, d2 = (self.S_WIDTH, 0), (self.S_WIDTH, self.S_WIDTH)  # right
         self.create_segment(a1, a2, segment_thickness, red)
         self.create_segment(b1, b2, segment_thickness, wheat)
-        self.create_segment(c1, c2, segment_thickness, white)
+        self.create_segment(c1, c2, segment_thickness, yellow)
         self.create_segment(d1, d2, segment_thickness, green)
 
     def run(self):
@@ -120,8 +120,11 @@ class BSS:
                 win32gui.SetWindowLong(self.hwnd, win32con.GWL_EXSTYLE,
                                        win32gui.GetWindowLong(self.hwnd, win32con.GWL_EXSTYLE) | win32con.WS_EX_LAYERED)
                 win32gui.SetLayeredWindowAttributes(self.hwnd, win32api.RGB(*(0, 0, 0)), 127, win32con.ULW_ALPHA)
-                pass # self.WRESurf = self.display.set_mode(self.WRESurf.get_size(),pg.NOFRAME,0, 1)
+                # self.WRESurf = self.display.set_mode(self.WRESurf.get_size(),pg.NOFRAME,0, 1)
             if event.type == pg.WINDOWRESIZED:
+                for num in range(0, self.Number_of_bubbles):
+                    let_the_sprites_know = f'self.bub{num}.Sprite.size_of_screen()'
+                    exec(let_the_sprites_know)
                 self.removebox()
                 self.boxwindow()
                 self.ui_man.set_window_resolution(self.screen_S)
@@ -136,10 +139,12 @@ class BSS:
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_ESCAPE:
                     pg.quit()
+                if event.key == pg.K_w:
+                    self.removebox()
                 if event.key == pg.K_BACKSLASH:
                     if self.Debug is False:
                         self.Debug = not self.Debug
-                        self.Bug = Debugger(self.ui_man,self.DEBUG_OFF)
+                        self.Bug = Debugger(self.ui_man, self.DEBUG_OFF)
                         self.Bug.draw_write(str(self.BubbleSprite_group), x=0, y=1)
                         self.Bug.draw_write(str(self.space.bodies), x=0, y=100)
                         self.cycle_render = self.draw_debug
@@ -151,6 +156,8 @@ class BSS:
             elif event.type == pg.KEYUP:
                 if event.key == pg.K_ESCAPE:
                     pass
+                if event.key == pg.K_w:
+                    self.boxwindow()
                 if event.key == pg.K_BACKSLASH:
                     pass
             if event.type == pg.MOUSEBUTTONDOWN:
@@ -163,10 +170,9 @@ class BSS:
             # UI EVENTS---------------------------------------------------------------------------------
             if event.type == pygame_gui.UI_BUTTON_PRESSED:
                 if event.ui_element == self.start_button:
-                    self.StartBubbles()
+                    self.start_bubbles()
 
             self.ui_man.process_events(event)
-
 
     def logic(self):
         self.clock = pg.time.Clock()
@@ -174,7 +180,7 @@ class BSS:
         self.delta_time = self.FPS / 1000
         self.ui_man.update(self.delta_time)
         self.space.step(self.delta_time)
-        self.StartBubbles() 
+        self.start_bubbles()
         self.Time_to_next_bubble.update()
         self.BubbleSprite_group.update()
 
@@ -186,13 +192,13 @@ class BSS:
 
     # noinspection PyUnusedLocal
     def spawn_bubble(self, img, pos, radius):
-        new_bubble = (f'bub{self.Number_of_bubbles} = Bubble(self.WRESurf, self.space)\n'
-                      f'bub{self.Number_of_bubbles}.sp(pos, radius, img)')
+        new_bubble = (f'self.bub{self.Number_of_bubbles} = Bubble(self.WRESurf, self.space)\n'
+                      f'self.bub{self.Number_of_bubbles}.sp(pos, radius, img)')
         exec(new_bubble)
-        to_group = f'self.BubbleSprite_group.add(bub{self.Number_of_bubbles}.Sprite)'
+        to_group = f'self.BubbleSprite_group.add(self.bub{self.Number_of_bubbles}.Sprite)'
         exec(to_group)
         self.Number_of_bubbles += 1
-        ic(self.Number_of_bubbles)
+        ic(self.Number_of_bubbles, to_group)
 
     def draw(self):
         self.BubbleSprite_group.draw(self.WRESurf)
@@ -216,7 +222,6 @@ class BSS:
 
     def to_draw(self):
         self.cycle_render = self.draw
-
 
 
 # RUN---------------------------------------------------------------------------------------------------------
